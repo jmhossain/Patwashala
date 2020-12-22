@@ -3,6 +3,11 @@ import './App.css';
 import './Login'
 import Login from './Login';
 import SignUp from './SignUp';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
 
 function App() {
   return (
@@ -12,7 +17,16 @@ function App() {
           Hello World!
         </p>
       </header>
-      <SignUp />
+      <Router>
+        <Switch>
+          <Route path="/signup">
+            <SignUp />
+          </Route>
+          <Route path="/login">
+            <Login />
+          </Route>
+        </Switch>
+      </Router>
     </div>
   );
 }

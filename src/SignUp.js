@@ -1,5 +1,7 @@
 import React from 'react'
 import "./auth.css"
+import {Link} from 'react-router-dom';
+
 class SignUp extends React.Component {
    state = {
       username: "",
@@ -34,6 +36,7 @@ class SignUp extends React.Component {
                <input name="confirmpassword" onChange={this.handleChange} type="password" />
             </div>
             <input type="submit" value="Sign Up" />
+            <Link to="/login"><a>Already have an account? Login</a></Link> 
          </form>
       </div>
    }

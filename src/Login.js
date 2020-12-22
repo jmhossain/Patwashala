@@ -1,5 +1,6 @@
-import React from 'react'
-import "./auth.css"
+import React from 'react';
+import './auth.css';
+import {Link} from 'react-router-dom';
 class Login extends React.Component{
    state = {
       username : "",
@@ -10,10 +11,14 @@ class Login extends React.Component{
          [e.target.name]: e.target.value
       })
    }
-   handleSubmit = (e) => {
+   handleSubmit = async (e) => {
       e.preventDefault()
       if(this.state.username !== "" && this.state.password !== ""){
          console.log(this.state)
+         await fetch('/login', {
+            method: 'POST',
+            body:JSON.stringify(this.state)
+         })
       }
       
    }
@@ -30,6 +35,7 @@ class Login extends React.Component{
                      <input name="password" onChange={this.handleChange} type="password" /> 
                   </div>
                   <input type="submit" value="Login"/>
+                  <Link to="/signup"><a>Don't have an account?</a></Link>
                </form>
             </div>
    }
