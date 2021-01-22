@@ -5,58 +5,72 @@ const db = require('./db');
 const crypto = require('crypto');
 
 //middleware
-app.use(express.json())
-app.use(express.static(path.join(__dirname, '../', 'build')))
+app.use(express.json());
+app.use(express.static(path.join(__dirname, '../', 'build')));
 
 //routes
 app.get('/*', (req, res) => {
-	res.sendFile(path.join(__dirname, '../', 'build', 'index.html'))
+	res.sendFile(path.join(__dirname, '../', 'build', 'index.html'));
 })
 
 app.post('/signup', async (req, res) => {
 	console.log(req.body);
 	const user = req.body;
-	checkdb = await db.query('SELECT * FROM users WHERE username=$1', [user.username])
-	if ((checkdb.rowCount > 0)) {
+	const userquery = await db.query('SELECT * FROM users WHERE username=$1', [user.username]);
+	
+	//Check that user doesn't exist
+	if (userquery.rowCount === 0) {
+		const sessionid = randomString();
+		await db.query('INSERT INTO users(username, password, sessionid) VALUES ($1, $2, $3)', [user.username, user.password, sessionid]);
+		res.setHeader('Set-Cookie', [`SESSION_ID=${sessionid};HttpOnly`])
+		res.send({"success": "Created user with success"})
+	}
+	else {
 		console.error('username already exists')
 		res.send('whoopsadaisy user exists and stuff')
 		return;
 	}
-	else {
-		console.log(await db.query('INSERT INTO users(username, password) VALUES ($1, $2)', [user.username, user.password]))
-	}
+
 });
 
 app.post('/login', async (req, res) => {
 	
 	const user = req.body;
-	checkdb = await db.query('SELECT FROM users WHERE username=$1', [user.username]);
-	dbuser = checkdb.rows[0];
+	const userquery = await db.query('SELECT FROM users WHERE username=$1', [user.username]);
+	dbuser = userquery.rows[0];
 
-	//fail
-	if (checkdb.rowCount === 0) {
-		res.send({ error: "sry no user by that name exists" })
-		console.error("user doesn't exist");
-	}
-	else {
+	//Check that user exists
+	if (userquery.rowCount !== 0) {
+		//Check that passwords match
 		if (dbuser.password == user.password) {
+			
 			console.log('login successful yay');
 			const sessionid = randomString();
 			const sql = 'update users set sessionid = $1 where username = $2';
 			const result = await db.query(sql, [sessionid, user.username]);
 			console.log(result);
 
-			res.setHeader('Set-Cookie', [`SESSION_ID=${sessionid};HttpOnly`])
+			res.setHeader('Set-Cookie', [`SESSION_ID=${sessionid};HttpOnly`]);
+			res.send({"success":"Created a user successfully"});
+
 		} else {
-			console.error('login failed nayy :(')
+			
+			console.error('login failed nayy :(');
+			res.send({"error":"username or password incorrect"});
+
 		}
+
 	}
-	
+	else {
+		res.send({ "error": "username or password incorrect" });
+		console.error("user doesn't exist");
+	}
+
 })
 
 app.listen(8080, () => {
-	console.log("Express server started successfully")
-})
+	console.log("Express server started successfully");
+});
 
 function randomString() {
 	const randomstring = crypto.randomBytes(64).toString('hex');
