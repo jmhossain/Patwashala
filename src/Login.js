@@ -17,7 +17,8 @@ class Login extends React.Component{
          console.log(this.state)
          await fetch('/login', {
             method: 'POST',
-            body:JSON.stringify(this.state)
+            body:JSON.stringify(this.state),
+            headers: {"Content-Type": "application/json"}
          })
       }
       

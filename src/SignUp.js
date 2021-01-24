@@ -13,10 +13,15 @@ class SignUp extends React.Component {
          [e.target.name]: e.target.value
       })
    }
-   handleSubmit = (e) => {
+   handleSubmit = async (e) => {
       e.preventDefault()
       if (this.state.username !== "" && this.state.password !== "") {
          console.log(this.state)
+         await fetch('/signup',{
+            method:'POST',
+            body: JSON.stringify(this.state),
+            headers: {'Content-Type': 'application/json'}
+         })
       }
 
    }
