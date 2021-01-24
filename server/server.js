@@ -3,16 +3,14 @@ const app = express();
 const path = require('path');
 const db = require('./db');
 const crypto = require('crypto');
-
+const cookieParser = require('cookie-parser');
+const { userInfo } = require('os');
 //middleware
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../', 'build')));
 
 //routes
-app.get('/*', (req, res) => {
-	res.sendFile(path.join(__dirname, '../', 'build', 'index.html'));
-})
-
 app.post('/signup', async (req, res) => {
 	console.log(req.body);
 	const user = req.body;
@@ -36,13 +34,14 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
 	
 	const user = req.body;
-	const userquery = await db.query('SELECT FROM users WHERE username=$1', [user.username]);
+	const userquery = await db.query('SELECT * FROM users WHERE username=$1', [user.username]);
 	dbuser = userquery.rows[0];
-
+	console.log(userquery)
+	console.log(user)
 	//Check that user exists
 	if (userquery.rowCount !== 0) {
 		//Check that passwords match
-		if (dbuser.password == user.password) {
+		if (dbuser.password === user.password) {
 			
 			console.log('login successful yay');
 			const sessionid = randomString();
@@ -66,7 +65,31 @@ app.post('/login', async (req, res) => {
 		console.error("user doesn't exist");
 	}
 
-})
+});
+
+app.get('/api/users', async (req, res) => {
+	console.log("got api request")
+	const sessionid = req.cookies.SESSION_ID;
+	if(sessionid){
+		const query = await db.query('SELECT * FROM users WHERE sessionid=$1', [sessionid]);
+		if(query.rowCount === 0){
+			res.status(401);
+			res.json({"error": "Unauthorized"});
+		}
+		else{
+			res.json(query.rows);
+			console.log(query);
+		}
+	}else{
+		res.status(401);
+		res.json({"error": "Unauthorized"});
+	}
+
+});
+
+app.get('/*', (req, res) => {
+	res.sendFile(path.join(__dirname, '../', 'build', 'index.html'));
+});
 
 app.listen(8080, () => {
 	console.log("Express server started successfully");
