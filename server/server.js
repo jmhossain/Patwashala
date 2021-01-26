@@ -71,7 +71,7 @@ app.get('/api/users', async (req, res) => {
 	console.log("got api request")
 	const sessionid = req.cookies.SESSION_ID;
 	if(sessionid){
-		const query = await db.query('SELECT * FROM users WHERE sessionid=$1', [sessionid]);
+		const query = await db.query('SELECT username FROM users WHERE sessionid=$1', [sessionid]);
 		if(query.rowCount === 0){
 			res.status(401);
 			res.json({"error": "Unauthorized"});
