@@ -2,6 +2,8 @@ import './App.css';
 import './Login'
 import Login from './Login';
 import SignUp from './SignUp';
+import Dashboard from './Dashboard';
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -29,7 +31,6 @@ class App extends Component{
     if (loading) {
       return <div> Loading... </div>
     }
-
     return (
       <div className="App">
         <header className="App-header">
@@ -37,19 +38,21 @@ class App extends Component{
             Hello World!
           </p>
         </header>
-        <Router>
-          <Switch>
-            <Route exact path= "/">
-              {this.state.loggedIn ? <p>{JSON.stringify(this.state.users)}</p> : <Redirect to="/login" />}
-            </Route>
-            <Route path="/signup">
-              <SignUp />
-            </Route>
-            <Route path="/login">
-              <Login />
-            </Route>
-          </Switch>
-        </Router>
+        <main>
+          <Router>
+            <Switch>
+              <Route exact path= "/">
+                {this.state.loggedIn ? <Dashboard {...this.state.users}/> : <Redirect to="/login" />}
+              </Route>
+              <Route path="/signup">
+                <SignUp />
+              </Route>
+              <Route path="/login">
+                <Login />
+              </Route>
+            </Switch>
+          </Router>
+        </main>
       </div>
     );
   }

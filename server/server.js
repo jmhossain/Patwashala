@@ -67,6 +67,25 @@ app.post('/login', async (req, res) => {
 
 });
 
+app.post('/post', async (req, res) => {
+	const sessionid = req.cookies.SESSION_ID;
+	
+	if(!sessionid){
+		res.status(401);
+		return;
+	}
+	
+	const query = await db.query("SELECT username FROM users WHERE sessionid=$1", [sessionid]);
+	
+	if (query.rowCount === 0){
+		res.status(401)
+	}
+	else{
+		let username = query.rows[0].username;
+		db.query("INSERT INTO posts(username, title, post) VALUES ($1, $2, $3)", [username, req.body.title, req.body.post])
+	}
+});
+
 app.get('/api/users', async (req, res) => {
 	console.log("got api request")
 	const sessionid = req.cookies.SESSION_ID;
@@ -77,8 +96,7 @@ app.get('/api/users', async (req, res) => {
 			res.json({"error": "Unauthorized"});
 		}
 		else{
-			res.json(query.rows);
-			console.log(query);
+			res.json(query.rows[0]);
 		}
 	}else{
 		res.status(401);
