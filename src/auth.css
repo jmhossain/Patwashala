@@ -1,25 +1,33 @@
 form{
-   padding: 20px;
+	padding: 20px;
     width: 300px;
     height: auto;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    text-align: center;
-    transform: translate(-50%, -50%);
     background: rgb(103, 89, 179);
     color: white;
 }
-input[type="text"], input[type="password"], input[type="email"]{
+input{
     border:none;
     background:none;
-    display:block;
     margin:20px auto;
     padding: 15px 8px;
     font-size: 1.3em;
     color: white;
     border-bottom:2px solid white;
     outline:none;
+    font-family: inherit;
+	width: stretch;
+}
+textarea{
+    font-family: inherit;
+	width: stretch;
+	border:none;
+	background:white;
+	margin: 20px auto;
+	padding: 15px 8px;
+	font-size: 1.3em;
+	color: black;
+    border-bottom: 2px solid white;
+    outline: none;
 }
 input[type="submit"]{
     border:none;
@@ -32,5 +40,4 @@ input[type="submit"]{
     font-size: 1.3em;
     border: 2px solid white;
     color: white;
-    
 }

@@ -1,5 +1,8 @@
 .App {
   margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
 }
 .App-header {
   background-color: #282c34;
@@ -9,4 +12,15 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+.App main{
+  flex: 1;
+  margin: 0;
+  display: flex;
+  flex-flow: column;
+}
+center{
+  flex: 1;
+  display: grid;
+  place-items: center;
 }
