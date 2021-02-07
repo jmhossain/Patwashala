@@ -2,3 +2,14 @@
     padding: 0 20%;
     display:grid;
 }
+.Dashboard form {
+    width: stretch;
+}
+.Post{
+    padding:10px 20px;
+    margin: 20px 0;
+    width: stretch;
+    background-color: #ff5e78;
+    color: #ffffff;
+    border-radius: 10px;
+}

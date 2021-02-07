@@ -6,6 +6,7 @@ class Dashboard extends Component{
         <div className="Dashboard">
             <h1>Hello {this.props.username}</h1>
             <PostForm></PostForm>
+            <Posts />
         </div>
     );   
     } 
@@ -31,12 +32,45 @@ class PostForm extends Component{
     render(){
         return(
             <form onSubmit={this.handleSubmit}>
-                <label for="title">Title</label><br />
+                <label htmlFor="title">Title</label><br />
                 <input name="title" type="text" value={this.state.value} onChange={this.handleChange}></input><br />
-                <label for="post">Post</label><br />
+                <label htmlFor="post">Post</label><br />
                 <textarea name="post" rows="5" value={this.state.value} onChange={this.handleChange}></textarea>
             </form>
         );
+    }
+}
+
+class Posts extends Component{
+    state = {
+        posts: [2,3,4]
+    }
+    async componentDidMount(){
+        try {
+            const postss = await(await fetch('/posts')).json();
+            this.setState({'posts': postss})
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+    render(){
+        const postelements = this.state.posts.map(post => {
+            return <Post {...post} />
+        });
+        return <section>
+            {postelements}
+        </section>
+    }
+}
+
+class Post extends Component{
+    render(){
+        return <article className="Post">
+            <h2>{this.props.title}</h2>
+            <address>From <a rel="author">{this.props.username}</a></address>
+            <p>{this.props.post}</p>
+        </article>
     }
 }
 

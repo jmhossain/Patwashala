@@ -85,7 +85,26 @@ app.post('/post', async (req, res) => {
 		db.query("INSERT INTO posts(username, title, post) VALUES ($1, $2, $3)", [username, req.body.title, req.body.post])
 	}
 });
-
+app.get('/posts', async (req, res) => {
+	console.log('well at least got here?')
+	const sessionid = req.cookies.SESSION_ID;
+	
+	if(!sessionid){
+		res.status(401);
+		return;
+	}
+	
+	const query = await db.query("SELECT username FROM users WHERE sessionid=$1", [sessionid]);
+	
+	if (query.rowCount === 0){
+		res.status(401)
+	}
+	else{
+		const posts = await db.query("SELECT username, title, post FROM posts")
+		res.json(posts.rows);
+		console.log('got here')
+	}
+});
 app.get('/api/users', async (req, res) => {
 	console.log("got api request")
 	const sessionid = req.cookies.SESSION_ID;
